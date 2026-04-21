@@ -5,7 +5,7 @@ import os
 import pyttsx3
 
 # --- Config ---
-API_KEY = "sk-62904df04de2495baef937f51f56e016" 
+API_KEY = st.secrets["API_KEY"] 
 client = OpenAI(api_key=API_KEY, base_url="https://api.deepseek.com")
 DB_FILE = "recipe_history.csv"
 
