@@ -2,7 +2,12 @@ import pandas as pd
 from openai import OpenAI
 import json
 import os
-import pyttsx3
+try:
+    import pyttsx3
+    HAS_TTS = True
+except ImportError:
+    HAS_TTS = False
+    print("TTS library not found, running in cloud mode without voice.")
 
 # --- Config ---
 API_KEY = st.secrets["API_KEY"] 
@@ -15,19 +20,16 @@ def init_storage():
         df.to_csv(DB_FILE, index=False)
 
 def text_to_speech(text, filename="recipe_audio.mp3"):
+    
+    if not HAS_TTS:
+        return None
+    
     try:
         engine = pyttsx3.init()
-        voices = engine.getProperty('voices')
-        for voice in voices:
-            if "EN-US" in voice.id.upper() or "ENGLISH" in voice.name.upper():
-                engine.setProperty('voice', voice.id)
-                break
-        engine.setProperty('rate', 150) 
-        engine.save_to_file(text, filename)
-        engine.runAndWait()
-        engine.stop()
+ 
         return filename
-    except:
+    except Exception as e:
+        print(f"TTS Error: {e}")
         return None
 
 def generate_health_reflection():
